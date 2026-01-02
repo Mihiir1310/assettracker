@@ -1,0 +1,61 @@
+datasource db {
+  provider = "postgresql"
+}
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+
+  // 👇 OPPOSITE RELATION (REQUIRED)
+  requests  Asset[]  @relation("AssetRequests")
+
+  createdAt DateTime @default(now())
+}
+
+model Asset {
+  id            String   @id @default(uuid())
+  name          String
+  type          String
+  owner         String
+  serial        String
+  category      String
+
+  status        AssetStatus @default(AVAILABLE)
+  requestStatus RequestStatus @default(NONE)
+
+  requestedById String?
+  requestedBy   User?   @relation("AssetRequests", fields: [requestedById], references: [id])
+
+  notes         String?
+  createdAt     DateTime @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AssetStatus {
+  AVAILABLE
+  ASSIGNED
+  MAINTENANCE
+  RETIRED
+  REQUESTED
+  REJECTED
+}
+
+enum RequestStatus {
+  NONE
+  PENDING
+  APPROVED
+  REJECTED
+}

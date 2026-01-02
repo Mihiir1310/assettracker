@@ -1,0 +1,42 @@
+[
+  {
+    "id": "asset-1764830758449",
+    "name": "mac",
+    "category": "lap",
+    "type": "laptop",
+    "owner": "design@com.com",
+    "serial": "qedwq123",
+    "status": "assigned",
+    "notes": "dwwqd"
+  },
+  {
+    "id": "asset-176483",
+    "name": "Dell",
+    "category": "lap",
+    "type": "laptop",
+    "owner": "design123@com.com",
+    "serial": "wq123",
+    "status": "assigned",
+    "notes": "dwwqd"
+  },
+  {
+    "id": "asset-758449",
+    "name": "hp",
+    "category": "lap",
+    "type": "laptop",
+    "owner": "design@com.com",
+    "serial": "qedwq456",
+    "status": "assigned",
+    "notes": "dwwqd"
+  },
+  {
+    "id": "asset-1764915007612",
+    "name": "mac14pro",
+    "category": "lap",
+    "type": "laptop",
+    "owner": "design@com.com",
+    "serial": "mac656",
+    "status": "assigned",
+    "notes": "dhffk"
+  }
+]
