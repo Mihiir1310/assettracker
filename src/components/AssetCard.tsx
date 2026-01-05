@@ -14,85 +14,121 @@ type Props = {
 
 export default function AssetCard({ asset, isAdmin }: Props) {
   const isRequested = asset.status === "REQUESTED";
-  
-  return (
-    <article className="bg-white p-4 rounded-lg shadow-sm">
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="font-semibold text-lg">{asset.name}</h3>
-          <div className="text-xs text-slate-500">
-            {asset.type} • {asset.serial}
-          </div>
-        </div>
 
-        {/* STATUS BADGE */}
-        <div>
+  const statusStyles: Record<string, string> = {
+    AVAILABLE: "bg-green-100 text-green-700",
+    ASSIGNED: "bg-yellow-100 text-yellow-700",
+    REQUESTED: "bg-blue-100 text-blue-700",
+    REJECTED: "bg-red-100 text-red-700",
+    MAINTENANCE: "bg-orange-100 text-orange-700",
+    RETIRED: "bg-slate-200 text-slate-700",
+  };
+
+  const statusIcon: Record<string, string> = {
+    AVAILABLE: "🟢",
+    ASSIGNED: "🔵",
+    REQUESTED: "🟣",
+    REJECTED: "🔴",
+    MAINTENANCE: "🟠",
+    RETIRED: "⚫",
+  };
+
+  return (
+    <div className="relative group">
+      {/* Gradient Glow */}
+      <div className="absolute -inset-1 rounded-2xl bg-linear-to-br from-indigo-500 via-purple-500 to-pink-500 opacity-20 blur-lg group-hover:opacity-30 transition" />
+
+      <article className="relative bg-white/80 backdrop-blur-xl p-5 rounded-2xl shadow-lg border border-white/40
+                          transition transform group-hover:-translate-y-1">
+        {/* Header */}
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="font-semibold text-lg text-gray-800">
+              {asset.name}
+            </h3>
+            <p className="text-xs text-gray-500">
+              {asset.type} • {asset.serial}
+            </p>
+          </div>
+
+          {/* Status Badge */}
           <span
-            className={`px-2 py-0.5 rounded text-xs ${
-              asset.status === "AVAILABLE"
-                ? "bg-green-100 text-green-800"
-                : asset.status === "ASSIGNED"
-                ? "bg-yellow-100 text-yellow-800"
-                : asset.status === "REQUESTED"
-                ? "bg-blue-100 text-blue-800"
-                : asset.status === "REJECTED"
-                ? "bg-red-100 text-red-800"
-                : "bg-slate-200 text-slate-700"
-            }`}
+            className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1
+                        ${statusStyles[asset.status]}`}
           >
-            {asset.status}
+            {statusIcon[asset.status]} {asset.status}
           </span>
         </div>
-      </div>
 
-      {/* USER REQUEST BUTTON */}
-      {!isAdmin && asset.status === "AVAILABLE" && (
-        <form action={requestAssetAction} className="mt-4">
-          <input type="hidden" name="id" value={asset.id} />
-          <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm">
-            Request
-          </button>
-        </form>
-      )}
+        {/* Notes */}
+        <p className="mt-3 text-sm text-gray-700">
+          {asset.notes || "No notes provided"}
+        </p>
 
-      {!isAdmin && isRequested && (
-        <p className="text-yellow-700 text-sm mt-3">Request Pending…</p>
-      )}
+        <p className="mt-2 text-xs text-gray-500">
+          Owner: <span className="font-medium">{asset.owner}</span>
+        </p>
 
-      {/* ADMIN OPTIONS */}
-      {isAdmin && (
-        <div className="mt-4 flex gap-2">
-
-          {isRequested && (
-            <>
-              <form action={approveAssetAction}>
-                <input type="hidden" name="id" value={asset.id} />
-                <button className="bg-green-600 text-white px-3 py-1 rounded text-sm">
-                  Approve
-                </button>
-              </form>
-
-              <form action={rejectAssetAction}>
-                <input type="hidden" name="id" value={asset.id} />
-                <button className="bg-red-600 text-white px-3 py-1 rounded text-sm">
-                  Reject
-                </button>
-              </form>
-            </>
-          )}
-
-          {/* ADMIN CAN ALWAYS DELETE */}
-          <form action={deleteAssetAction}>
+        {/* USER ACTION */}
+        {!isAdmin && asset.status === "AVAILABLE" && (
+          <form action={requestAssetAction} className="mt-4">
             <input type="hidden" name="id" value={asset.id} />
-            <button className="bg-slate-700 text-white px-3 py-1 rounded text-sm">
-              Delete
+            <button
+              className="w-full rounded-lg bg-linear-to-r from-blue-600 to-indigo-600
+                         px-3 py-2 text-sm font-medium text-white
+                         hover:from-blue-700 hover:to-indigo-700
+                         transition shadow"
+            >
+              📩 Request Asset
             </button>
           </form>
-        </div>
-      )}
+        )}
 
-      <div className="mt-3 text-sm text-slate-700">{asset.notes || "—"}</div>
-      <div className="mt-2 text-xs text-slate-500">Owner: {asset.owner}</div>
-    </article>
+        {!isAdmin && isRequested && (
+          <p className="mt-4 text-sm text-blue-700 font-medium">
+            ⏳ Request Pending Approval
+          </p>
+        )}
+
+        {/* ADMIN ACTIONS */}
+        {isAdmin && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {isRequested && (
+              <>
+                <form action={approveAssetAction}>
+                  <input type="hidden" name="id" value={asset.id} />
+                  <button
+                    className="rounded-lg bg-linear-to-r from-green-600 to-emerald-600
+                               px-3 py-1.5 text-sm text-white hover:opacity-90 transition"
+                  >
+                    ✅ Approve
+                  </button>
+                </form>
+
+                <form action={rejectAssetAction}>
+                  <input type="hidden" name="id" value={asset.id} />
+                  <button
+                    className="rounded-lg bg-linear-to-r from-red-600 to-pink-600
+                               px-3 py-1.5 text-sm text-white hover:opacity-90 transition"
+                  >
+                    ❌ Reject
+                  </button>
+                </form>
+              </>
+            )}
+
+            <form action={deleteAssetAction}>
+              <input type="hidden" name="id" value={asset.id} />
+              <button
+                className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm text-white
+                           hover:bg-slate-900 transition"
+              >
+                🗑 Delete
+              </button>
+            </form>
+          </div>
+        )}
+      </article>
+    </div>
   );
 }
